@@ -76,7 +76,12 @@ for archivo in ficheros:
             georesultado['features'].append(value)
 
         resultado = codecs.open(dir_destino+ext[0]+'.geojson', 'w','utf-8')
-        resultado.write(json.dumps(georesultado))
+        jsongeo = json.dumps(georesultado, ensure_ascii=False).encode('utf8')
+
+        resultado.write(jsongeo.decode('utf-8'))
+
+
+
         resultado.close()
 
 
