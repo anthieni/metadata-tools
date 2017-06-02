@@ -103,24 +103,24 @@ for archivo in ficheros:
 
 
             #Genero los archivos para el producto terminado
-            try:
-
-                #Creamos el zip con todos los archivos extraidos
-                os.chdir(dir_producto)  #cambiar al directorio donde quiero crear la carpeta zip
-                #configuramos el metodo de compresion
-                compresion = zipfile.ZIP_DEFLATED
-
-                zfilename = nombre_producto_f
-                zf = zipfile.ZipFile(zfilename, "w")
-                zf.write(os.path.join(dir_origen, archivo),arcname=archivo, compress_type=compresion)
-                zf.close()
-                #borro el archivo de origen
-                #os.remove(os.path.join(dir_origen, archivo))
-
-                print("Se genero el producto del archivo: " + zfilename + " correctamente \n")
-
-            except:
-                print("ERROR [009]: No se ha podido manipular el archivo: " + archivo + "\n")
+            # try:
+            #
+            #     #Creamos el zip con todos los archivos extraidos
+            #     os.chdir(dir_producto)  #cambiar al directorio donde quiero crear la carpeta zip
+            #     #configuramos el metodo de compresion
+            #     compresion = zipfile.ZIP_DEFLATED
+            #
+            #     zfilename = nombre_producto_f
+            #     zf = zipfile.ZipFile(zfilename, "w")
+            #     zf.write(os.path.join(dir_origen, archivo),arcname=archivo, compress_type=compresion)
+            #     zf.close()
+            #     #borro el archivo de origen
+            #     #os.remove(os.path.join(dir_origen, archivo))
+            #
+            #     print("Se genero el producto del archivo: " + zfilename + " correctamente \n")
+            #
+            # except:
+            #     print("ERROR [009]: No se ha podido manipular el archivo: " + archivo + "\n")
 
 
         else:
