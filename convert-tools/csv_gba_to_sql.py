@@ -8,8 +8,8 @@ import codecs
 
 
 #Establecimiento de variables
-dir_origen = '/opt/repositorio/metadata-tools/convert-tools/data/in/'
-dir_destino = '/opt/repositorio/metadata-tools/convert-tools/data/out/'
+dir_origen = '/opt/desarrollo/metadata-tools/convert-tools/data/in/'
+dir_destino = '/opt/desarrollo/metadata-tools/convert-tools/data/out/'
 geocampo = 'WKT'
 tabla = 'calles_indec'
 
@@ -36,7 +36,7 @@ for archivo in ficheros:
         #Paso a un array la estructura
         arreglo = []
         geoarreglo = []
-        propiedades = {}
+        elementos_sql = {}
         multigeo = {}
         multiwkt = ''
 
@@ -46,6 +46,17 @@ for archivo in ficheros:
         filecsv.close()
 
         encabezado = arreglo[0]
+        encabezado_col = ''
+
+
+        #Genero el archivo de destino
+        resultado = codecs.open(dir_destino+ext[0]+'.sql', 'w','utf-8')
+
+        #jsongeo = json.dumps(georesultado, ensure_ascii=False).encode('utf8')
+
+        #resultado.write(jsongeo.decode('utf-8'))
+
+
 
         #creamos la tabla necesario para la importacion
         createsql = 'CREATE TABLE '+tabla+' ('
@@ -57,9 +68,16 @@ for archivo in ficheros:
             else:
                 createsql = createsql + col + ' ' + 'character varying(255) , '
 
-        createsql = createsql[:-2]
+            encabezado_col = encabezado_col + col + ', '
 
-        createsql = createsql + ');'
+        createsql = createsql[:-2]
+        encabezado_col = encabezado_col[:-2]
+
+        createsql = createsql + ');\n'
+
+        #Escribo en el archivo
+        resultado.write(createsql)
+
 
         idgeo = encabezado.index(geocampo)
 
@@ -71,37 +89,26 @@ for archivo in ficheros:
                 i=i+1
             else:
                 j = 0
-                propiedades = {}
+                elementos_sql = []
                 for col in encabezado:
-
-                    if (j != idgeo):
-                        propiedades[col] = elemento[j]
-                    else:
-                        multiwkt = elemento[j]
-
+                    elementos_sql.append(elemento[j])
                     j=j+1
 
 
+                #Genero el registro de insercion
+                insertsql = 'INSERT INTO '+tabla + ' (' + encabezado_col + ') VALUES ('
 
-UPDATE table_name
-SET column1 = value1, column2 = value2, ...
-WHERE condition;
-                #Almaceno las propiedades
-                multigeo = geojson.Feature(geometry=g1, properties=propiedades)
+                for columna in elementos_sql:
 
-                geoarreglo.append(multigeo)
+                    insertsql = insertsql +"$$" + columna + "$$" + ', '
 
 
-        georesultado = { "type": "FeatureCollection", "features": [] }
+                insertsql = insertsql[:-2]
 
-        for value in geoarreglo:
-            georesultado['features'].append(value)
+                insertsql = insertsql + ');\n'
 
-        resultado = codecs.open(dir_destino+ext[0]+'.geojson', 'w','utf-8')
-        jsongeo = json.dumps(georesultado, ensure_ascii=False).encode('utf8')
-
-        resultado.write(jsongeo.decode('utf-8'))
-
+                #Escribo en el archivo
+                resultado.write(insertsql)
 
 
         resultado.close()
